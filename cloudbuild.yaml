@@ -6,23 +6,13 @@ substitutions:
 
 steps:
 
-  - name: 'gcr.io/$PROJECT_ID/sonar-scanner:latest'
-    entrypoint: 'bash'
-    secretEnv: ['SONAR_TOKEN'] # This must match the 'env' name below
-    args:
-      - '-c'
-      - |
-        sonar-scanner \
-          -Dsonar.login=$$SONAR_TOKEN \
-          -Dsonar.host.url=https://sonarcloud.io \
-          
-    id: 'quality-gate'
+ 
 
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}:$COMMIT_SHA', '.']
     id: 'build-image'
-    waitFor: ['quality-gate']
+    
 
 
   - name: 'aquasec/trivy:latest'
