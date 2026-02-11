@@ -1,7 +1,4 @@
-# ============================================
-# GOOGLE CLOUD BUILD CONFIGURATION
-# CI/CD pipeline for ubioworo-project
-# ============================================
+
 
 substitutions:
   _SERVICE_NAME: "ci-cd-practice-app"     
@@ -10,15 +7,13 @@ substitutions:
   _REPO: "crytoapp"                  
 
 steps:
-  # ------------------------------
-  # STEP 1: PRINT BUILD INFO
-  # ------------------------------
+
   - name: 'ubuntu'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "🚀 STARTING CI/CD PIPELINE"
+        echo "STARTING CI/CD PIPELINE"
         echo "=========================="
         echo "Project: $PROJECT_ID"
         echo "Commit: $COMMIT_SHA"
@@ -27,26 +22,21 @@ steps:
         echo "Image: ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}:$COMMIT_SHA"
         echo ""
 
-  # ------------------------------
-  # STEP 2: INSTALL DEPENDENCIES & RUN TESTS
-  # ------------------------------
+
   - name: 'node:18-alpine'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-        echo "📦 Installing dependencies..."
-        cd src
+        echo "Installing dependencies..."
         npm ci
-        echo "✅ Dependencies installed"
+        echo "Dependencies installed"
         echo ""
-        echo "🧪 Running tests..."
+        echo "Running tests..."
         npm test
-        echo "✅ Tests passed"
+        echo "Tests passed"
 
-  # ------------------------------
-  # STEP 3: BUILD DOCKER IMAGE
-  # ------------------------------
+
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -59,9 +49,7 @@ steps:
       - '.'
     id: 'build'
 
-  # ------------------------------
-  # STEP 4: PUSH TO ARTIFACT REGISTRY
-  # ------------------------------
+
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
@@ -69,9 +57,6 @@ steps:
     id: 'push'
     waitFor: ['build']
 
-  # ------------------------------
-  # STEP 5: DEPLOY TO CLOUD RUN
-  # ------------------------------
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -82,7 +67,7 @@ steps:
       - '--region=${_REGION}'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--port=8080'
+      - '--port=80'
       - '--set-env-vars=ENV=production,COMMIT_HASH=$COMMIT_SHA,DEPLOYED_VIA=cloud-build'
       - '--memory=256Mi'
       - '--cpu=1'
@@ -91,16 +76,14 @@ steps:
     id: 'deploy'
     waitFor: ['push']
 
-  # ------------------------------
-  # STEP 6: PRINT DEPLOYMENT INFO
-  # ------------------------------
+ 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         echo ""
-        echo "🎉 DEPLOYMENT SUCCESSFUL!"
+        echo "DEPLOYMENT SUCCESSFUL!"
         echo "========================"
         echo ""
         echo "Service URL:"
@@ -115,23 +98,17 @@ steps:
         echo "Service details:"
         echo "   gcloud run services describe ${_SERVICE_NAME} --region=${_REGION}"
 
-# ------------------------------
-# ARTIFACTS - Docker images
-# ------------------------------
+
 images:
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}:$COMMIT_SHA'
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}:latest'
 
-# ------------------------------
-# OPTIONS - Default Cloud Logging & service account
-# ------------------------------
+
 options:
   logging: CLOUD_LOGGING_ONLY
   machineType: 'E2_HIGHCPU_8'
   dynamicSubstitutions: true
 
 
-# ------------------------------
-# TIMEOUT - Maximum build time (1 hour)
-# ------------------------------
+
 timeout: 3600s
