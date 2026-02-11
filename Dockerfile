@@ -7,25 +7,27 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci 
+RUN npm ci
 
-# Copy source code
+e
 COPY . .
 
-# Build the app
+p
 RUN npm run build
 
-# Production stage
+
 FROM nginx:alpine
 
-# Copy built app from builder stage
+
+RUN apk add --no-cache bash gettext
+
+
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/templates/nginx.conf
 
-# Expose port 80
-EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 8080
+
+
+CMD envsubst '$PORT' < /etc/nginx/templates/nginx.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'
