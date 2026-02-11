@@ -27,7 +27,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/templates/nginx.conf
 
 
-EXPOSE 8080
+EXPOSE 80
 
 
 CMD envsubst '$PORT' < /etc/nginx/templates/nginx.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'
