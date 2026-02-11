@@ -7,7 +7,7 @@ substitutions:
   _SERVICE_NAME: "ci-cd-practice-app"     
   _REGION: "us-central1"                  
   _IMAGE_NAME: "practice-app"             
-  _REPO: "cryptoapp"                     
+  _REPO: "crytoapp"                  
 
 steps:
   # ------------------------------
