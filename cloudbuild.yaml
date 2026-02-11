@@ -67,7 +67,7 @@ steps:
       - '--region=${_REGION}'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--port=80'
+      - '--port=8080'
       - '--set-env-vars=ENV=production,COMMIT_HASH=$COMMIT_SHA,DEPLOYED_VIA=cloud-build'
       - '--memory=256Mi'
       - '--cpu=1'
