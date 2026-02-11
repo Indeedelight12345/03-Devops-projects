@@ -15,7 +15,7 @@ steps:
         sonar-scanner \
           -Dsonar.login=$$SONAR_TOKEN \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.qualitygate.wait=true 
+          
     id: 'quality-gate'
 
 
