@@ -8,7 +8,7 @@ steps:
 
   - name: 'gcr.io/$PROJECT_ID/sonar-scanner:latest'
     entrypoint: 'bash'
-    secretEnv: ['sonar']
+    secretEnv: ['SONAR_TOKEN'] # This must match the 'env' name below
     args:
       - '-c'
       - |
@@ -36,6 +36,7 @@ steps:
     id: 'push-image'
     waitFor: ['security-gate']
 
+
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -50,10 +51,11 @@ steps:
     id: 'deploy-green'
     waitFor: ['push-image']
 
+
 availableSecrets:
   secretManager:
-  - versionName: projects/$PROJECT_ID/secrets/SONAR_TOKEN/versions/latest
-    env: 'sonar'
+  - versionName: projects/$PROJECT_ID/secrets/sonar/versions/latest
+    env: 'SONAR_TOKEN'
 
 options:
   logging: CLOUD_LOGGING_ONLY
