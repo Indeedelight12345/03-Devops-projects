@@ -129,7 +129,7 @@ options:
   logging: CLOUD_LOGGING_ONLY
   machineType: 'E2_HIGHCPU_8'
   dynamicSubstitutions: true
-  serviceAccount: 'cloudbuild-cici-account@ubioworo-project.iam.gserviceaccount.com'
+
 
 # ------------------------------
 # TIMEOUT - Maximum build time (1 hour)
